@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import random
 
-from models import setup_db, Question, Category
+from models import setup_db, Question, Category, rollback_db, close_db_session
 
 QUESTIONS_PER_PAGE = 10
 
@@ -46,6 +46,25 @@ def create_app(test_config=None):
             }
         except Exception:
             abort(500)
+
+    @app.route('/questions/<int:question_id>', methods=['DELETE'])
+    def delete_questions(question_id):
+        question = Question.query.filter(Question.id == question_id).one_or_none()
+        if question is None:
+            abort(422)
+        error = False
+        try:
+            question.delete()
+        except Exception:
+            error = True
+            rollback_db()
+            print(sys.exc_info())
+        finally:
+            close_db_session()
+            if error:
+                abort(500)
+            else:
+                return jsonify({"message": "deleted"})
 
     # TODO: Create an endpoint to DELETE question using a question ID.
     #        TEST: When you click the trash icon next to a question, the question will be removed.
