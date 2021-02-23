@@ -130,3 +130,6 @@ dmypy.json
 
 # jetbrains config files
 .idea
+
+# node packages
+node_modules
