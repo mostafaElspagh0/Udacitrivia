@@ -1,6 +1,5 @@
-from .__init__ import *
+from flaskr.db import db
 from sqlalchemy import Column, String, Integer, create_engine
-
 
 
 class Category(db.Model):
