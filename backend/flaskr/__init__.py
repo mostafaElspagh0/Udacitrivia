@@ -4,7 +4,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import random
 
-from models import setup_db, Question, Category, rollback_db, close_db_session
+from models import setup_db, rollback_db, close_db_session
+from controllers import categories_controller
 
 QUESTIONS_PER_PAGE = 10
 
@@ -23,12 +24,7 @@ def create_app(test_config=None):
         response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
         return response
 
-    @app.route('/categories', methods=['GET'])
-    def categories():
-        all_categories = Category.query.all()
-        return jsonify({
-            'categories': {category.id: category.type for category in all_categories}
-        })
+    categories_controller(app)
 
     @app.route('/questions', methods=['GET'])
     def questions():
