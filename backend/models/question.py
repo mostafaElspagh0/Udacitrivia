@@ -12,8 +12,6 @@ class Question(db.Model):
     category_id = Column(Integer, ForeignKey(f'{Category.__tablename__}.id'))
     difficulty = Column(Integer)
 
-    category =  db.relationship("Category", back_populates="questions")
-
     def __init__(self, question, answer, category, difficulty):
         self.question = question
         self.answer = answer
@@ -36,6 +34,6 @@ class Question(db.Model):
             'id': self.id,
             'question': self.question,
             'answer': self.answer,
-            'category': self.category,
+            'category': self.category.type,
             'difficulty': self.difficulty
         }

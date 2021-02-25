@@ -8,6 +8,8 @@ class Category(db.Model):
     id = Column(Integer, primary_key=True)
     type = Column(String)
 
+    questions = db.relationship('Question', backref='category', lazy=True)
+
     def __init__(self, type):
         self.type = type
 
