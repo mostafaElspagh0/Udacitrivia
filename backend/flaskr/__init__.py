@@ -24,12 +24,6 @@ def create_app(test_config=None):
 
     categories_controller(app)
     questions_controller(app, int(app.config['QUESTIONS_PER_PAGE']))
-    # TODO: Create an endpoint to POST a new question,
-    #        which will require the question and answer text,
-    #        category, and difficulty score.
-    #        TEST: When you submit a question on the "Add" tab,
-    #              the form will clear and the question will appear at the end of the last page
-    #              of the questions list in the "List" tab.
 
     # TODO: Create a POST endpoint to get questions based on a search term.
     #       It should return any questions for whom the search term
