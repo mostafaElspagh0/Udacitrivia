@@ -1,4 +1,4 @@
-from models.category import Category
+from models import Category
 from flask import jsonify
 
 
@@ -9,3 +9,17 @@ def categories_controller(app):
         return jsonify({
             'categories': {category.id: category.type for category in all_categories}
         })
+
+    @app.route('/categories/<int:category_id>/questions', methods=['GET'])
+    def get_category_questions(category_id):
+        categoryI = Category.query.filter(Category.id == int(category_id)).one_or_none()
+        if categoryI is None:
+            abort(422)
+        all_categories = Category.query.all()
+        category_questions = categoryI.questions
+        return {
+            'categories': {category.id: category.type for category in all_categories},
+            'questions': [question.format() for question in category_questions],
+            'total_questions': len(category_questions),
+            'current_category': None
+        }
