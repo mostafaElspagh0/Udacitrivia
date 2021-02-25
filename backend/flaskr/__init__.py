@@ -7,8 +7,6 @@ import random
 from .db import setup_db, rollback_db, close_db_session
 from controllers import categories_controller, questions_controller
 
-QUESTIONS_PER_PAGE = 10
-
 
 def create_app(test_config=None):
     # create and configure the app
@@ -25,7 +23,7 @@ def create_app(test_config=None):
         return response
 
     categories_controller(app)
-    questions_controller(app)
+    questions_controller(app, int(app.config['QUESTIONS_PER_PAGE']))
     # TODO: Create an endpoint to POST a new question,
     #        which will require the question and answer text,
     #        category, and difficulty score.
