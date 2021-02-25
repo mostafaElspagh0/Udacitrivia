@@ -55,11 +55,6 @@ class TriviaTestCase(unittest.TestCase):
         res = self.client().get('/categories/30/questions')
         self.assertEqual(res.status_code, 404)
 
-    """
-    TODO
-    Write at least one test for each test for successful operation and for expected errors.
-    """
-
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
