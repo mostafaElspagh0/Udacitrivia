@@ -2,7 +2,7 @@ import os
 
 
 class DatabaseUri:
-    type = 'postgres'
+    type = 'postgresql'
     name = "trivia_dev"
     host = 'localhost'
     port = 5432
