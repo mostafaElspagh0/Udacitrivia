@@ -1,7 +1,7 @@
 from models import Question
 from flask import jsonify, abort, request
 from models import Category, Question
-from flaskr.db import get_db_session
+from database import db
 import sys
 
 

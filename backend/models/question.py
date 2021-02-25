@@ -1,4 +1,4 @@
-from flaskr.db import db
+from database import db
 from sqlalchemy import Column, String, Integer, create_engine, ForeignKey
 from .category import Category
 

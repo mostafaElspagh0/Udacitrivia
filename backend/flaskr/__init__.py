@@ -1,10 +1,7 @@
-import os
-from flask import Flask, request, abort, jsonify
-from flask_sqlalchemy import SQLAlchemy
+from flask import Flask, jsonify
 from flask_cors import CORS
-import random
 
-from .db import setup_db
+from database import setup_db
 from controllers import categories_controller, questions_controller, quizzes_controller
 
 
