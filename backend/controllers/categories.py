@@ -1,5 +1,6 @@
 from models import Category
 from flask import jsonify
+from flask import abort
 
 
 def categories_controller(app):
@@ -14,9 +15,11 @@ def categories_controller(app):
     def get_category_questions(category_id):
         categoryI = Category.query.filter(Category.id == int(category_id)).one_or_none()
         if categoryI is None:
-            abort(422)
+            abort(404)
         all_categories = Category.query.all()
         category_questions = categoryI.questions
+        if len(category_questions) == 0:
+            abort(404)
         return {
             'categories': {category.id: category.type for category in all_categories},
             'questions': [question.format() for question in category_questions],
