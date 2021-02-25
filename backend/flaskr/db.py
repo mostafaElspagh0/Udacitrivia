@@ -14,9 +14,5 @@ def setup_migration(app, db):
     migration = Migrate(app, db)
 
 
-def rollback_db():
-    db.session.roll_back()
-
-
-def close_db_session():
-    db.session.close()
+def get_db_session():
+    return db.session

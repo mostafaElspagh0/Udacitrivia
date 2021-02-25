@@ -1,6 +1,8 @@
 from models import Question
 from flask import jsonify, abort, request
-from models import Category
+from models import Category, Question
+from flaskr.db import get_db_session
+import sys
 
 
 def questions_controller(app, questions_per_page):
@@ -24,18 +26,20 @@ def questions_controller(app, questions_per_page):
 
     @app.route('/questions/<int:question_id>', methods=['DELETE'])
     def delete_questions(question_id):
+        session = get_db_session()
         question = Question.query.get(question_id)
         if question is None:
             abort(422)
         error = False
         try:
-            question.delete()
+            session.delete(question)
+            session.comit()
         except Exception:
             error = True
-            rollback_db()
+            session.roll_back()
             print(sys.exc_info())
         finally:
-            close_db_session()
+            session.close()
             if error:
                 abort(500)
             else:

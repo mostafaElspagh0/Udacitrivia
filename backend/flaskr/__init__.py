@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import random
 
-from .db import setup_db, rollback_db, close_db_session
+from .db import setup_db
 from controllers import categories_controller, questions_controller
 
 
