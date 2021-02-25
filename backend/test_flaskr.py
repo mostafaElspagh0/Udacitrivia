@@ -38,6 +38,10 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['total_questions'])
         self.assertTrue(data['categories'])
 
+    def test_questions_return_404_when_cant_find_question(self):
+        res = self.client().get('/questions?page=100')
+        self.assertEqual(res.status_code, 404)
+
     """
     TODO
     Write at least one test for each test for successful operation and for expected errors.
