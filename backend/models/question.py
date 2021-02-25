@@ -1,5 +1,6 @@
 from flaskr.db import db
-from sqlalchemy import Column, String, Integer, create_engine
+from sqlalchemy import Column, String, Integer, create_engine, ForeignKey
+from .category import Category
 
 
 class Question(db.Model):
@@ -8,8 +9,10 @@ class Question(db.Model):
     id = Column(Integer, primary_key=True)
     question = Column(String)
     answer = Column(String)
-    category = Column(String)
+    category_id = Column(Integer, ForeignKey(f'{Category.__tablename__}.id'))
     difficulty = Column(Integer)
+
+    category =  db.relationship("Category", back_populates="questions")
 
     def __init__(self, question, answer, category, difficulty):
         self.question = question
