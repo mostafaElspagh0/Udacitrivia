@@ -25,11 +25,6 @@ def create_app(test_config=None):
     categories_controller(app)
     questions_controller(app, int(app.config['QUESTIONS_PER_PAGE']))
 
-    # TODO: Create a GET endpoint to get questions based on category.
-    #       TEST: In the "List" tab / main screen, clicking on one of the
-    #             categories in the left column will cause only questions of that
-    #             category to be shown.
-
     # TODO: Create a POST endpoint to get questions to play the quiz.
     #       This endpoint should take category and previous question parameters
     #       and return a random questions within the given category,
