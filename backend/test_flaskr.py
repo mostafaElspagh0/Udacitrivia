@@ -42,6 +42,15 @@ class TriviaTestCase(unittest.TestCase):
         res = self.client().get('/questions?page=100')
         self.assertEqual(res.status_code, 404)
 
+    def test_get_categories(self):
+        default_res = (b'{"categories":{"1":"Science","2":"Art","3":"Geography","4":"History",'
+                       b'"5":"Entertainment","6":"Sports"}}\n')
+
+        res = self.client().get('/categories')
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.data, default_res)
+
     """
     TODO
     Write at least one test for each test for successful operation and for expected errors.
