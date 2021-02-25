@@ -51,6 +51,10 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertEqual(res.data, default_res)
 
+    def test_get_categories_questions_return_404(self):
+        res = self.client().get('/categories/30/questions')
+        self.assertEqual(res.status_code, 404)
+
     """
     TODO
     Write at least one test for each test for successful operation and for expected errors.
