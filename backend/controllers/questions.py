@@ -73,7 +73,7 @@ def questions_controller(app, questions_per_page):
             if error:
                 abort(500)
             else:
-                return jsonify({"message": "created"})
+                return jsonify({"message": "created"}),201
 
     def search_questions(payload):
         try:
