@@ -44,3 +44,30 @@ def questions_controller(app, questions_per_page):
                 abort(500)
             else:
                 return jsonify({"message": "deleted"})
+
+    @app.route('/questions', methods=['POST'])
+    def post_questions():
+        error = False
+        session = get_db_session()
+        try:
+            payload = request.json
+            question_category = Category.query.filter(Category.id == int(payload['category'])).one_or_none()
+            if question_category is None:
+                abort(422)
+            question = Question(question=payload['question'],
+                                answer=payload['answer'],
+                                difficulty=payload['difficulty'],
+                                category=question_category)
+
+            session.add(question)
+            session.commit()
+        except Exception:
+            error = True
+            session.roll_back()
+            print(sys.exc_info())
+        finally:
+            session.close()
+            if error:
+                abort(500)
+            else:
+                return jsonify({"message": "created"})
