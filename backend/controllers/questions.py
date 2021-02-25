@@ -33,7 +33,7 @@ def questions_controller(app, questions_per_page):
         error = False
         try:
             session.delete(question)
-            session.comit()
+            session.commit()
         except Exception:
             error = True
             session.roll_back()
