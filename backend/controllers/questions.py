@@ -47,10 +47,16 @@ def questions_controller(app, questions_per_page):
 
     @app.route('/questions', methods=['POST'])
     def post_questions():
+        payload = request.json
+        if 'searchTerm' in payload:
+            return search_questions(payload)
+        else:
+            return create_questions(payload)
+
+    def create_questions(payload):
         error = False
         session = get_db_session()
         try:
-            payload = request.json
             question_category = Category.query.filter(Category.id == int(payload['category'])).one_or_none()
             if question_category is None:
                 abort(422)
@@ -71,3 +77,21 @@ def questions_controller(app, questions_per_page):
                 abort(500)
             else:
                 return jsonify({"message": "created"})
+
+    def search_questions(payload):
+        try:
+            search_term = payload['searchTerm']
+            page = request.args.get('page', 1, type=int)
+            offset = questions_per_page * (page - 1)
+            all_categories = Category.query.all()
+            search_result = Question.query.filter(Question.question.ilike(f'%{search_term}%')).order_by(
+                Question.id).limit(
+                questions_per_page).offset(offset).all()
+            return {
+                'categories': {category.id: category.type for category in all_categories},
+                'questions': [question.format() for question in search_result],
+                'total_questions': Question.query.filter(Question.question.ilike(f'%{search_term}%')).count(),
+                'current_category': None
+            }
+        except Exception:
+            abort(500)
