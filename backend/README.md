@@ -51,43 +51,227 @@ flask run
 Setting the `FLASK_ENV` variable to `development` will detect file changes and restart the server automatically.
 
 Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` directory and the `__init__.py` file to find the application. 
+## API Reference
 
-## Tasks
-
-One note before you delve into your tasks: for each endpoint you are expected to define the endpoint and response data. The frontend will be a plentiful resource because it is set up to expect certain endpoints and response data formats already. You should feel free to specify endpoints in your own way; if you do so, make sure to update the frontend or you will get some unexpected behavior. 
-
-1. Use Flask-CORS to enable cross-domain requests and set response headers. 
-2. Create an endpoint to handle GET requests for questions, including pagination (every 10 questions). This endpoint should return a list of questions, number of total questions, current category, categories. 
-3. Create an endpoint to handle GET requests for all available categories. 
-4. Create an endpoint to DELETE question using a question ID. 
-5. Create an endpoint to POST a new question, which will require the question and answer text, category, and difficulty score. 
-6. Create a POST endpoint to get questions based on category. 
-7. Create a POST endpoint to get questions based on a search term. It should return any questions for whom the search term is a substring of the question. 
-8. Create a POST endpoint to get questions to play the quiz. This endpoint should take category and previous question parameters and return a random questions within the given category, if provided, and that is not one of the previous questions. 
-9. Create error handlers for all expected errors including 400, 404, 422 and 500. 
-
-REVIEW_COMMENT
-```
-This README is missing documentation of your endpoints. Below is an example for your endpoint to get all categories. Please use it as a reference for creating your documentation and resubmit your code. 
-
-Endpoints
-GET '/categories'
-GET ...
-POST ...
-DELETE ...
-
-GET '/categories'
-- Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
+####  GET `/categories`
+- Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category.
 - Request Arguments: None
-- Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs. 
+- example: `curl http://localhost:5000/api/v1/categories -H "Content-Type: application/json"`
+```
 {'1' : "Science",
 '2' : "Art",
 '3' : "Geography",
 '4' : "History",
 '5' : "Entertainment",
 '6' : "Sports"}
-
 ```
+
+### GET `/questions`
+- Fetches a dictionary of paginated questions, as well as a list of category dictionaries, in which the keys are the category ids and the values are the corresponding category strings.
+- Request Arguments:
+    - optional URL queries:
+        - `page`: an optional integer for a page number, which is used to fetch 10 questions for the corresponding page.
+        - default: `1`
+- Returns: An object with 3 keys:
+    - `questions`: a list that contains paginated questions objects, that coorespond to the `page` query.
+        - int:`id`: Question id.
+        - str:`question`: Question text.
+        - int:`difficulty`: Question difficulty.
+        - int:`category`: question category id.
+    - `categories`: a dictionary that contains objects of id: category_string key:value pairs.
+    - int:`total_questions`: an integer that contains total questions
+- example: `curl http://localhost:5000/api/v1/categories -H "Content-Type: application/json"`
+```
+{
+  "categories": {
+    "1": "Science", 
+    "2": "Art", 
+    "3": "Geography", 
+    "4": "History", 
+    "5": "Entertainment", 
+    "6": "Sports"
+  }, 
+  "questions": [
+    {
+      "answer": "Apollo 13", 
+      "category": 5, 
+      "difficulty": 4, 
+      "id": 2, 
+      "question": "What movie earned Tom Hanks his third straight Oscar nomination, in 1996?"
+    }, 
+    {
+      "answer": "Tom Cruise", 
+      "category": 5, 
+      "difficulty": 4, 
+      "id": 4, 
+      "question": "What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?"
+    }
+  ], 
+  "success": true, 
+  "total_questions": 2
+}
+```
+
+#### GET `/categories/<int:id>/questions`
+- Fetches a dictionary of paginated questions that are in the category specified in the URL parameters.
+- Request Arguments:
+    - optional URL queries:
+        - `page`: an optional integer for a page number, which is used to fetch 10 questions for the corresponding page.
+        - default: `1`
+- Returns: An object with 3 keys:
+    - str:`current_category`: a string that contains the category type for the selected category.
+    - `questions`: a list that contains paginated questions objects, that coorespond to the `page` query.
+        - int:`id`: Question id.
+        - str:`question`: Question text.
+        - int:`difficulty`: Question difficulty.
+        - int:`category`: question category id.
+    - int:`total_questions`: an integer that contains total questions in the selected category.
+- example: `curl http://localhost:5000/api/v1/categories/1/questions -H "Content-Type: application/json"`
+```
+{
+  "current_category": "Science", 
+  "questions": [
+    {
+      "answer": "The Liver", 
+      "category": 1, 
+      "difficulty": 4, 
+      "id": 20, 
+      "question": "What is the heaviest organ in the human body?"
+    }, 
+    {
+      "answer": "Alexander Fleming", 
+      "category": 1, 
+      "difficulty": 3, 
+      "id": 21, 
+      "question": "Who discovered penicillin?"
+    }
+  ], 
+  "total_questions": 2
+}
+```
+
+#### DELETE `/questions/<int:id>`
+- Deletes the question by the id specified in the URL parameters.
+- Request Arguments: None
+- Returns: A dictionary that contain deleted: question_id key:value pair.
+- example: `curl -X DELETE http://localhost:5000/api/v1/questions/20 -H "Content-Type: application/json"`
+```
+{
+    "message": deleted
+}
+```
+
+#### POST `/questions/search`
+- search for a question.
+- Request Arguments:
+  - Json object:
+    - str:`searchTerm`: a string that contains the search term to search with.
+- returns: an object with the following:
+  - `questions`: a list that contains paginated questions objects, durrived from the search term.
+      - int:`id`: Question id.
+      - str:`question`: Question text.
+      - int:`difficulty`: Question difficulty.
+      - int:`category`: question category id.
+  - int:`total_questions`: an integer that contains total questions returned from the search.
+- example: `curl -X POST http://localhost:5000/api/v1/questions -H "Content-Type: application/json" -d '{"searchTerm": "title"}'`
+```
+{
+    "questions": [
+        {
+            "answer": "Maya Angelou", 
+            "category": 4, 
+            "difficulty": 2, 
+            "id": 5, 
+            "question": "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
+        }, 
+        {
+            "answer": "Edward Scissorhands", 
+            "category": 5,
+            "difficulty": 3,
+            "id": 6,
+            "question": "What was the title of the 1990 fantasy directed by Tim Burton about a young man with multi-bladed appendages?"
+        }
+    ], 
+    "total_questions": 2
+}
+```
+
+#### POST `/questions`
+- posts a new question.
+- Request Arguments:
+  - Json object:
+    - str:`question`: A string that contains the question text.
+    - str:`answer`: A string that contains the answer text.
+    - int:`difficulty`: An integer that contains the difficulty, please note that `difficulty` can be from 1 to 5.
+    - int:`category: An integer that contains the category id.
+- Returns: an object with the following keys:
+  - int:`id`: an integer that contains the ID for the created question.
+  - str:`question`: A string that contains the text for the created question.
+  - `questions`: a list that contains paginated questions objects.
+      - int:`id`: Question id.
+      - str:`question`: Question text.
+      - int:`difficulty`: Question difficulty.
+      - int:`category`: question category id.
+  - int:`total_questions`: an integer that contains total questions.
+- example: `curl -X POST http://localhost:5000/api/v1/questions -H "Content-Type: application/json" -d '{ "question": "What is the application used to build great python backends?", "answer": "Flask", "difficulty": 2, "category": 1}'`
+```
+{
+    "id": 42, 
+    "question": "What is the application used to build great python backends?", 
+    "questions": [
+        {
+            "answer": "Agra", 
+            "category": 3, 
+            "difficulty": 2, 
+            "id": 15, 
+            "question": "The Taj Mahal is located in which Indian city?"
+        }, 
+        {
+            "answer": "Escher", 
+            "category": 2, 
+            "difficulty": 1, 
+            "id": 16, 
+            "question": "Which Dutch graphic artist\u2013initials M C was a creator of optical illusions?"
+        }
+    ], 
+    "total_questions": 2
+}
+```
+
+#### POST `/quizzes`
+- allows the user to play the quiz game, returning a random question that is not in the previous_questions list.
+- Request Arguments:
+  - Json object:
+    - `previous_questions`: A list that contains the IDs of the previous questions. If starting the game for the first time, you can post an empty list.
+    - `quiz_category`: A dictionary that contains the category id and category type.
+      - int:`id`: the category id to get the random question from.  
+      use `0` to get a random question from all categories.
+      - str:`type`: an optional value for the category type.  
+      Please note that this variable is provided only for convenience, and it will not have any effect on getting the question.
+- returns: a question dictionary that has the following data:
+      - int:`id`: An integer that contains the question ID.
+      - str:`question`: A string that contains the question text.
+      - str:`answer`: A string that contains the answer text.
+      - int:`difficulty`: An integer that contains the difficulty.
+      - int:`category: An integer that contains the category ID.
+- Examples:
+  - request a random question with previous questions and the category "science":  
+  `curl -X POST http://localhost:5000/api/v1/quizzes -H "Content-Type: application/json" -d '{"previous_questions": [21], "quiz_category": {"type": "Science", "id": 1}}'`
+  - request with no previous questions, for a random question from all categories:  
+  `curl -X POST http://localhost:5000/api/v1/quizzes -H "Content-Type: application/json" -d '{"previous_questions": [], "quiz_category": {"id": 0}}'`
+Sample return:
+```
+{
+    "question": {
+        "answer": "Flask", 
+        "category": 1, 
+        "difficulty": 2, 
+        "id": 42, 
+        "question": "What is the application used to build great python backends?"
+    }, 
+}
+```
+
 
 
 ## Testing
