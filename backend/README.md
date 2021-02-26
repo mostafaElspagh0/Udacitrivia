@@ -54,33 +54,41 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
 ## API Reference
 
 ####  GET `/categories`
-- Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category.
+- Fetches a json object of categories
 - Request Arguments: None
 - example: `curl http://localhost:5000/api/v1/categories -H "Content-Type: application/json"`
+
+Sample response:
+
 ```
-{'1' : "Science",
+{
+'1' : "Science",
 '2' : "Art",
 '3' : "Geography",
 '4' : "History",
 '5' : "Entertainment",
-'6' : "Sports"}
+'6' : "Sports"
+}
 ```
 
 ### GET `/questions`
-- Fetches a dictionary of paginated questions, as well as a list of category dictionaries, in which the keys are the category ids and the values are the corresponding category strings.
+- Fetches paginated questions, categories json object
 - Request Arguments:
     - optional URL queries:
-        - `page`: an optional integer for a page number, which is used to fetch 10 questions for the corresponding page.
-        - default: `1`
+        - `page`: an optional integer for a page number
+            - default: `1`
 - Returns: An object with 3 keys:
     - `questions`: a list that contains paginated questions objects, that coorespond to the `page` query.
         - int:`id`: Question id.
         - str:`question`: Question text.
         - int:`difficulty`: Question difficulty.
         - int:`category`: question category id.
-    - `categories`: a dictionary that contains objects of id: category_string key:value pairs.
-    - int:`total_questions`: an integer that contains total questions
+    - `categories`: json object contain all categories
+    - int:`total_questions`:  total number questions
 - example: `curl http://localhost:5000/api/v1/categories -H "Content-Type: application/json"`
+
+Sample response:
+
 ```
 {
   "categories": {
@@ -114,10 +122,7 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
 
 #### GET `/categories/<int:id>/questions`
 - Fetches a dictionary of paginated questions that are in the category specified in the URL parameters.
-- Request Arguments:
-    - optional URL queries:
-        - `page`: an optional integer for a page number, which is used to fetch 10 questions for the corresponding page.
-        - default: `1`
+- Request Arguments: none
 - Returns: An object with 3 keys:
     - str:`current_category`: a string that contains the category type for the selected category.
     - `questions`: a list that contains paginated questions objects, that coorespond to the `page` query.
@@ -125,8 +130,11 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
         - str:`question`: Question text.
         - int:`difficulty`: Question difficulty.
         - int:`category`: question category id.
-    - int:`total_questions`: an integer that contains total questions in the selected category.
+    - int:`total_questions`: total questions count.
 - example: `curl http://localhost:5000/api/v1/categories/1/questions -H "Content-Type: application/json"`
+
+Sample response:
+
 ```
 {
   "current_category": "Science", 
@@ -153,8 +161,11 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
 #### DELETE `/questions/<int:id>`
 - Deletes the question by the id specified in the URL parameters.
 - Request Arguments: None
-- Returns: A dictionary that contain deleted: question_id key:value pair.
+- Returns: message :deleted if success 
 - example: `curl -X DELETE http://localhost:5000/api/v1/questions/20 -H "Content-Type: application/json"`
+
+Sample response:
+
 ```
 {
     "message": deleted
@@ -167,13 +178,16 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
   - Json object:
     - str:`searchTerm`: a string that contains the search term to search with.
 - returns: an object with the following:
-  - `questions`: a list that contains paginated questions objects, durrived from the search term.
+  - `questions`: list of questions .
       - int:`id`: Question id.
       - str:`question`: Question text.
       - int:`difficulty`: Question difficulty.
       - int:`category`: question category id.
-  - int:`total_questions`: an integer that contains total questions returned from the search.
+  - int:`total_questions`:  total questions count returned from the search.
 - example: `curl -X POST http://localhost:5000/api/v1/questions -H "Content-Type: application/json" -d '{"searchTerm": "title"}'`
+
+Sample response:
+
 ```
 {
     "questions": [
@@ -204,37 +218,12 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
     - str:`answer`: A string that contains the answer text.
     - int:`difficulty`: An integer that contains the difficulty, please note that `difficulty` can be from 1 to 5.
     - int:`category: An integer that contains the category id.
-- Returns: an object with the following keys:
-  - int:`id`: an integer that contains the ID for the created question.
-  - str:`question`: A string that contains the text for the created question.
-  - `questions`: a list that contains paginated questions objects.
-      - int:`id`: Question id.
-      - str:`question`: Question text.
-      - int:`difficulty`: Question difficulty.
-      - int:`category`: question category id.
-  - int:`total_questions`: an integer that contains total questions.
 - example: `curl -X POST http://localhost:5000/api/v1/questions -H "Content-Type: application/json" -d '{ "question": "What is the application used to build great python backends?", "answer": "Flask", "difficulty": 2, "category": 1}'`
+
+Sample response:
 ```
 {
-    "id": 42, 
-    "question": "What is the application used to build great python backends?", 
-    "questions": [
-        {
-            "answer": "Agra", 
-            "category": 3, 
-            "difficulty": 2, 
-            "id": 15, 
-            "question": "The Taj Mahal is located in which Indian city?"
-        }, 
-        {
-            "answer": "Escher", 
-            "category": 2, 
-            "difficulty": 1, 
-            "id": 16, 
-            "question": "Which Dutch graphic artist\u2013initials M C was a creator of optical illusions?"
-        }
-    ], 
-    "total_questions": 2
+    "message" : "created"
 }
 ```
 
@@ -242,12 +231,10 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
 - allows the user to play the quiz game, returning a random question that is not in the previous_questions list.
 - Request Arguments:
   - Json object:
-    - `previous_questions`: A list that contains the IDs of the previous questions. If starting the game for the first time, you can post an empty list.
+    - `previous_questions`: A list that contains the IDs of the previous questions. 
     - `quiz_category`: A dictionary that contains the category id and category type.
       - int:`id`: the category id to get the random question from.  
-      use `0` to get a random question from all categories.
-      - str:`type`: an optional value for the category type.  
-      Please note that this variable is provided only for convenience, and it will not have any effect on getting the question.
+      use `0` for all categories.
 - returns: a question dictionary that has the following data:
       - int:`id`: An integer that contains the question ID.
       - str:`question`: A string that contains the question text.
@@ -257,9 +244,8 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
 - Examples:
   - request a random question with previous questions and the category "science":  
   `curl -X POST http://localhost:5000/api/v1/quizzes -H "Content-Type: application/json" -d '{"previous_questions": [21], "quiz_category": {"type": "Science", "id": 1}}'`
-  - request with no previous questions, for a random question from all categories:  
-  `curl -X POST http://localhost:5000/api/v1/quizzes -H "Content-Type: application/json" -d '{"previous_questions": [], "quiz_category": {"id": 0}}'`
-Sample return:
+
+Sample response:
 ```
 {
     "question": {
